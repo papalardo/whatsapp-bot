@@ -2,7 +2,6 @@ import waw from 'whatsapp-web.js';
 import DropboxService from "./DropboxService.js";
 import HttpException from "../exceptions/HttpException.js";
 import fetchBase64 from "fetch-base64";
-import WaInstance from "./WaInstance.js";
 const { MessageMedia } = waw;
 
 const SendSticker = async (client, recipient, stickerName) => {
@@ -24,10 +23,8 @@ const SendSticker = async (client, recipient, stickerName) => {
     const media = new MessageMedia('image/webp', image)
 
     return client.sendMessage(recipient, media, {
-            sendMediaAsSticker: true,
-            // stickerName: 'Copiado com sucesso',
-            // stickerAuthor: 'Stickyr'
-        });
+        sendMediaAsSticker: true,
+    });
 }
 
 export default {
