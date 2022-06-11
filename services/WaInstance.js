@@ -1,8 +1,11 @@
+import {extractMetadata, Sticker, StickerTypes} from 'wa-sticker-formatter'
 import WhatsAppSdk from 'whatsapp-web.js';
 const { Client, LocalAuth } = WhatsAppSdk;
 import fs from 'fs';
 import Str from "../helpers/Str.js";
 import Socket from './Socket.js';
+import DropboxService from "./DropboxService.js";
+import WaService from "./WaService.js";
 
 function WaInstance() {
     const sessions = {};
@@ -29,6 +32,12 @@ function WaInstance() {
         client.on('message', async (message) => {
             if (message.isStatus) return;
 
+            if (message.body.startsWith('!z')) {
+                const stickerName = message.body.replace('!z ', '');
+                await WaService.SendSticker(client, message.from, stickerName)
+                    .catch((e) => console.error('Erro ao enviar sticker', e))
+            }
+
             Socket.emit('wa:message', message);
 
             if (message.hasMedia && message.type === 'sticker') {
@@ -38,7 +47,25 @@ function WaInstance() {
         });
 
         const saveSticker = async (base64Data) => {
-            fs.writeFile(`./.uploads/${Str.random(20)}.webp`, base64Data, 'base64');
+            const image  = new Buffer.from(base64Data, 'base64');
+
+            const metaTag = await extractMetadata(image);
+
+            if (DropboxService.stickerExists(`${metaTag['sticker-pack-id']}.webp`)) {
+                return;
+            }
+
+            const stickerId = Str.random(20);
+
+            const buffer = await new Sticker(image)
+                .setPack('Ztickers')
+                .setAuthor('ztickers.app')
+                .setID(stickerId)
+                .toBuffer()
+
+            DropboxService.upload(`/New Stickers/${stickerId}.webp`, buffer)
+                .then((r) => console.log(`Novo upload => ${stickerId}`))
+                .catch((e) => console.error('Erro ao realizar upload Dropbox', e))
         }
 
         sessions[sessionId] = {
@@ -52,7 +79,7 @@ function WaInstance() {
 
     const setReady = (sessionId, status) => sessions[sessionId].ready = status;
 
-    const setQrCode = (sessionId, qrCode) => sessions[sessionId] = qrCode;
+    const setQrCode = (sessionId, qrCode) => sessions[sessionId].qrCode = qrCode;
 
     const isInitialized = (sessionId) => sessions[sessionId] !== undefined;
 

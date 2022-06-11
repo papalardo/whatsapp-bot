@@ -1,6 +1,11 @@
 import waw from 'whatsapp-web.js';
 import WaInstance from '../services/WaInstance.js';
 import HttpException from '../exceptions/HttpException.js';
+import QrCodeTerminal from 'qrcode-terminal';
+import DropboxService from "../services/DropboxService.js";
+import {DropboxResponseError} from "dropbox";
+import fetchBase64 from 'fetch-base64';
+import WaService from "../services/WaService.js";
 
 const { MessageMedia } = waw;
 
@@ -22,6 +27,8 @@ const GetQrCode = (req, res) => {
     if (qrCode === undefined) {
         throw new HttpException('Unavailable yet');
     }
+
+    QrCodeTerminal.generate(qrCode, { small: true });
 
     return res.send({
         qrCode
@@ -66,16 +73,13 @@ const SendMessage = (req, res) => {
     })
 }
 
-const SendSticker = (req, res) => {
+const SendSticker = async (req, res) => {
     const { phone } = req.auth;
+    const stickerName = req.body.stickerName;
 
-    void WaInstance.instance(phone)
-        .getClient()
-        .sendMessage(`${req.body.recipient}@c.us`, MessageMedia.fromFilePath(req.body.path), {
-            sendMediaAsSticker: true,
-            stickerName: 'Copiado com sucesso',
-            stickerAuthor: 'Pablo Papalardo'
-        });
+    const client = WaInstance.instance(phone).getClient();
+
+    await WaService.SendSticker(client, `${req.body.recipient}@c.us`, stickerName);
 
     return res.send({
         message: "SENT",

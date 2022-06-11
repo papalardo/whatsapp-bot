@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { JWT_CONFIG } from '../config/index.js';
+import config from '../config/index.js';
 
 const Login = (req, res) => {
     const phone = req.body.phone;
@@ -8,7 +8,7 @@ const Login = (req, res) => {
         phone,
     };
 
-    const token = jwt.sign(payload, JWT_CONFIG.SECRET);
+    const token = jwt.sign(payload, config.JWT.SECRET);
 
     res.send({
         token
