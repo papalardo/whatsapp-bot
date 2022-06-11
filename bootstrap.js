@@ -27,7 +27,7 @@ export default function boot({ routes, websocket }) {
             .initialize();
     }
 
-    server.listen(port, () => {
+    server.listen(process.env.PORT || 3000, () => {
         console.log(`App listening on port ${port}`)
     });
 }
