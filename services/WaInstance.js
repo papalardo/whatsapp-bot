@@ -12,6 +12,9 @@ function WaInstance() {
 
     const createSession = (sessionId) => {
         const client = new Client({
+            puppeteer: {
+                args: ['--no-sandbox','--disable-setuid-sandbox']
+            },
             authStrategy: new LocalAuth({
                 clientId: sessionId,
             })
