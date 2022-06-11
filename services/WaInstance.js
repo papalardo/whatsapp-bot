@@ -1,11 +1,9 @@
-import {extractMetadata, Sticker, StickerTypes} from 'wa-sticker-formatter'
 import WhatsAppSdk from 'whatsapp-web.js';
 const { Client, LocalAuth } = WhatsAppSdk;
-import fs from 'fs';
-import Str from "../helpers/Str.js";
 import Socket from './Socket.js';
-import DropboxService from "./DropboxService.js";
 import WaService from "./WaService.js";
+import Queue from '../core/queue.js';
+import {JOBS, JOBS_LIST} from "../jobs/index.js";
 
 function WaInstance() {
     const sessions = {};
@@ -50,25 +48,11 @@ function WaInstance() {
         });
 
         const saveSticker = async (base64Data) => {
-            const image  = new Buffer.from(base64Data, 'base64');
+            const image = new Buffer.from(base64Data, 'base64').toString('hex');
 
-            const metaTag = await extractMetadata(image);
+            console.log('NEW STICKER');
 
-            if (DropboxService.stickerExists(`${metaTag['sticker-pack-id']}.webp`)) {
-                return;
-            }
-
-            const stickerId = Str.random(20);
-
-            const buffer = await new Sticker(image)
-                .setPack('Ztickers')
-                .setAuthor('ztickers.app')
-                .setID(stickerId)
-                .toBuffer()
-
-            DropboxService.upload(`/New Stickers/${stickerId}.webp`, buffer)
-                .then((r) => console.log(`Novo upload => ${stickerId}`))
-                .catch((e) => console.error('Erro ao realizar upload Dropbox', e))
+            Queue.instances.DEFAULT.add(JOBS_LIST.SAVE_STICKER, { image });
         }
 
         sessions[sessionId] = {
