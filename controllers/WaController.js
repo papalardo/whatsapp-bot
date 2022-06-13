@@ -1,13 +1,7 @@
-import waw from 'whatsapp-web.js';
 import WaInstance from '../services/WaInstance.js';
 import HttpException from '../exceptions/HttpException.js';
 import QrCodeTerminal from 'qrcode-terminal';
-import DropboxService from "../services/DropboxService.js";
-import {DropboxResponseError} from "dropbox";
-import fetchBase64 from 'fetch-base64';
 import WaService from "../services/WaService.js";
-
-const { MessageMedia } = waw;
 
 const GetQrCode = (req, res) => {
     const { phone } = req.auth;

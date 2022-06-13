@@ -5,9 +5,9 @@ import fetchBase64 from "fetch-base64";
 const { MessageMedia } = waw;
 
 const SendSticker = async (client, recipient, stickerName) => {
-    if (! DropboxService.stickerExists(`${stickerName}.webp`)) {
-        throw new HttpException('Sticker not found', 404);
-    }
+    // if (! DropboxService.stickerExists(`${stickerName}.webp`)) {
+    //     throw new HttpException('Sticker not found', 404);
+    // }
 
     const url = await DropboxService
         .instance

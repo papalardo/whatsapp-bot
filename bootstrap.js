@@ -23,11 +23,11 @@ export default function boot({ routes, websocket }) {
 
     Socket.setServer(io);
 
-    if (process.env.NODE_ENV === 'development') {
-        WaInstance.createSession('61982856800')
-            .getClient()
-            .initialize();
-    }
+    // if (process.env.NODE_ENV === 'development') {
+    //     WaInstance.createSession('61982856800')
+    //         .getClient()
+    //         .initialize();
+    // }
 
     server.listen(port, () => {
         console.log(`App listening on port ${port}`)

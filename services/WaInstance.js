@@ -3,7 +3,7 @@ const { Client, LocalAuth } = WhatsAppSdk;
 import Socket from './Socket.js';
 import WaService from "./WaService.js";
 import Queue from '../core/queue.js';
-import {JOBS, JOBS_LIST} from "../jobs/index.js";
+import { JOBS_LIST } from "../jobs/index.js";
 
 function WaInstance() {
     const sessions = {};
