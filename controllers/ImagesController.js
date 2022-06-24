@@ -36,19 +36,11 @@ const GetImagesController = async (req, res) => {
 }
 
 const GetStickers = async (req, res) => {
-    // const images = await DropboxService.instance.filesListFolder({
-    //     path: '/New Stickers',
-    //     limit: 2000,
-    // });
-    //
-    // const imagesNames = images.result.entries.map((entry) => entry.name);
-
     const stickers = await orm('stickers')
         .orderBy('id', 'DESC')
         .paginate(req.pagination());
 
     res.send(stickers);
-    // imagesNames
 }
 
 export default {

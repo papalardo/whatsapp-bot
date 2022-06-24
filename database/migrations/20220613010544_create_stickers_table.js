@@ -7,8 +7,8 @@ export const up = (knex) => {
         table.increments();
         table.string('name').notNullable();
         table.boolean('approved').default(false);
-        table.timestamp('created_at').notNullable().defaultTo(Database.raw('CURRENT_TIMESTAMP'));
-        table.timestamp('updated_at').notNullable().defaultTo(Database.raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
+        table.dateTime('created_at').notNullable().defaultTo(knex.raw('CURRENT_TIMESTAMP'))
+        table.dateTime('updated_at').notNullable().defaultTo(knex.raw('CURRENT_TIMESTAMP'))
     })
 };
 
